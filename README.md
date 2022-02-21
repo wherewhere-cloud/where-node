@@ -1,6 +1,8 @@
 # where-node
 WhereWhere.cloud Node.js helper library
 
+[![NPM](https://nodei.co/npm/where-node.png?downloads=true&stars=true)](https://nodei.co/npm/where-node/)
+
 # Get Started
 ```bash
 npm install where-node
