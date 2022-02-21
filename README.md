@@ -33,8 +33,59 @@ promise.then(success => {
 	console.log(err.msg)
 })
 
+// Get devices' location
+where.location.list({page_size: 20})
+.then(data => {
+	data.forEach(device => {
+		consol.log("imei: " + device.imei)
+		consol.log("latitude: " + device.latitude)
+		consol.log("longitude: " + device.longitude)
+		consol.log("speed: " + device.speed)
+	})
+	
+})
+.catch(err => {
+	console.log(err.msg)
+})
+
+// more examples please see example.js
 ```
 
+## All class
+
+```javascript
+
+WhereApi.location
+WhereApi.location.list(params = {})
+WhereApi.location.status(params = {})
+WhereApi.location.update(params = {})
+
+WhereApi.device
+WhereApi.device.list(params = {})
+WhereApi.device.add(params = {})
+WhereApi.device.update(params = {})
+WhereApi.device.delete(imei)
+
+WhereApi.report
+WhereApi.report.by_device(params = {})
+WhereApi.report.by_date(params = {})
+
+WhereApi.track
+WhereApi.track.history(params = {})
+WhereApi.track.analysis(params = {})
+
+WhereApi.parking
+WhereApi.parking.list(params = {})
+WhereApi.parking.detail(parking_id)
+WhereApi.parking.devices(parking_id)
+WhereApi.parking.logs(parking_id)
+WhereApi.parking.create(params = {})
+WhereApi.parking.delete(params = {})
+WhereApi.parking.add_device(params = {})
+WhereApi.parking.delete_device(params = {})
+WhereApi.parking.update_device(params = {})
+
+```
 # Documentation
 
 # Version
