@@ -1,0 +1,25 @@
+{
+  "name": "where-node",
+  "version": "0.1.0",
+  "description": "WhereWhere.cloud Node.js helper library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wherewhere-cloud/where-node.git"
+  },
+  "keywords": [
+    "wherewhere",
+    "map",
+    "location",
+    "node"
+  ],
+  "author": "wherewhere.dev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wherewhere-cloud/where-node/issues"
+  },
+  "homepage": "https://github.com/wherewhere-cloud/where-node#readme"
+}
