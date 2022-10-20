@@ -1,6 +1,6 @@
 {
   "name": "where-node",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "WhereWhere.cloud Node.js helper library",
   "main": "index.js",
   "scripts": {
