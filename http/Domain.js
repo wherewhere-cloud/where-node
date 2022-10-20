@@ -13,7 +13,7 @@ var axios = require("axios");
  * @param {Where} where - A Where Client
  * @param {string} baseUrl - Base url for this domain
  */
-function Domain(where, baseUrl = '') {
+function Domain(where, baseUrl = "") {
   this.where = where;
   this.baseUrl = baseUrl || where.baseUrl;
 }
@@ -45,38 +45,41 @@ Domain.prototype.request = function (opts) {
 Domain.prototype.get = function (url, params = {}) {
   var deferred = Q.defer();
 
-  var token = this.token();
-  token.then((data) => {
-    this._token = data;
+  var promise = new Promise((resolve, reject) => {
+    let access_token = this.where.token || null;
+    if (!access_token) {
+      reject({
+        code: 401,
+        msg: "token is required",
+      });
+    }
 
-    var promise = new Promise((resolve, reject) => {
-      params["access_token"] = this._token;
+    let _params = new FormData();
+    params["access_token"] = access_token;
+    for (let key in params) {
+      _params.append(key, params[key]);
+    }
 
-      axios({
-        method: "get",
-        url: this.absoluteUrl(url),
-        params: params,
+    axios({
+      url: this.absoluteUrl(url),
+      method: "get",
+      params: params,
+    })
+      .then((res) => {
+        let result = res.data;
+        if (result.code == 0) resolve(result.data);
+        else reject(result);
       })
-        .then((res) => {
-          let result = res.data;
-          if (result.code == 0) resolve(result.data);
-          else reject(result);
-        })
-        .catch((err) => {
-          reject({ msg: JSON.stringify(err) });
-        });
-    });
-
-    promise.then((data) => {
-      deferred.resolve(data);
-    });
-    promise.catch((err) => {
-      deferred.reject(err);
-    });
+      .catch((err) => {
+        reject({ msg: JSON.stringify(err) });
+      });
   });
 
-  token.catch(function (error) {
-    deferred.reject(error);
+  promise.then((data) => {
+    deferred.resolve(data);
+  });
+  promise.catch((err) => {
+    deferred.reject(err);
   });
 
   return deferred.promise;
@@ -84,72 +87,109 @@ Domain.prototype.get = function (url, params = {}) {
 
 Domain.prototype.post = function (url, params = {}) {
   var deferred = Q.defer();
-  var full_url = this.absoluteUrl(url);
+  var promise = new Promise((resolve, reject) => {
+    let access_token = this.where.token || null;
+    if (!access_token) {
+      reject({
+        code: 401,
+        msg: "token is required",
+      });
+    }
 
-  var token = this.token();
-  token.then((data) => {
-    this._token = data;
+    let _params = new FormData();
+    params["access_token"] = access_token;
+    for (let key in params) {
+      _params.append(key, params[key]);
+    }
 
-    var promise = new Promise((resolve, reject) => {
-      params["access_token"] = this._token;
-
-      let _params = new FormData();
-      for (var key in params) _params.append(key, params[key]);
-
-      axios
-        .post(full_url, _params)
-        .then((res) => {
-          let result = res.data;
-          if (result.code == 0) {
-            resolve(result.data);
-          } else reject(result);
-        })
-        .catch((err) => {
-          reject({ msg: JSON.stringify(err) });
-        });
-    });
-
-    promise.then((data) => {
-      deferred.resolve(data);
-    });
-    promise.catch((err) => {
-      deferred.reject(err);
-    });
+    axios
+      .post(this.absoluteUrl(url), _params)
+      .then((res) => {
+        let result = res.data;
+        if (result.code == 0) {
+          resolve(result.data);
+        } else {
+          reject(result);
+        }
+      })
+      .catch((err) => {
+        reject({ msg: JSON.stringify(err) });
+      });
   });
 
-  token.catch(function (error) {
-    deferred.reject(error);
+  promise.then((data) => {
+    deferred.resolve(data);
+  });
+  promise.catch((err) => {
+    deferred.reject(err);
   });
 
   return deferred.promise;
 };
 
-Domain.prototype.token = function () {
-  return new Promise((resolve, reject) => {
-    if (this.where.token) {
-      resolve(this.where.token);
-    } else {
-      let url = this.absoluteUrl("access_token");
-      let params = new FormData();
-      params.append("app_id", this.where.app_id);
-      params.append("app_secret", this.where.app_secret);
+Domain.prototype.uget = function (url, params = {}) {
+  var deferred = Q.defer();
 
-      axios
-        .post(url, params)
-        .then((res) => {
-          let result = res.data;
-          if (result.code == 0) {
-            var token = result.data.access_token;
-            // token 缓存
-            this.where.token = token;
-            resolve(token);
-          } else reject(result);
-        })
-        .catch((err) => {
-          reject({ msg: JSON.stringify(err) });
-        });
+  var promise = new Promise((resolve, reject) => {
+    let _params = new FormData();
+    for (let key in params) {
+      _params.append(key, params[key]);
     }
+    axios({
+      url: this.absoluteUrl(url),
+      method: "get",
+      params: params,
+    })
+      .then((res) => {
+        let result = res.data;
+        if (result.code == 0) resolve(result.data);
+        else reject(result);
+      })
+      .catch((err) => {
+        reject({ msg: JSON.stringify(err) });
+      });
   });
+
+  promise.then((data) => {
+    deferred.resolve(data);
+  });
+  promise.catch((err) => {
+    deferred.reject(err);
+  });
+
+  return deferred.promise;
+};
+
+Domain.prototype.upost = function (url, params = {}) {
+  var deferred = Q.defer();
+  var promise = new Promise((resolve, reject) => {
+    let _params = new FormData();
+    for (let key in params) {
+      _params.append(key, params[key]);
+    }
+    axios
+      .post(this.absoluteUrl(url), _params)
+      .then((res) => {
+        let result = res.data;
+        if (result.code == 0) {
+          resolve(result.data);
+        } else {
+          reject(result);
+        }
+      })
+      .catch((err) => {
+        reject({ msg: JSON.stringify(err) });
+      });
+  });
+
+  promise.then((data) => {
+    deferred.resolve(data);
+  });
+  promise.catch((err) => {
+    deferred.reject(err);
+  });
+
+  return deferred.promise;
 };
 
 module.exports = Domain;

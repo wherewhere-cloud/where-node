@@ -18,14 +18,8 @@ var axios = require("axios");
   * @returns {WhereApi} A new instance of WhereApi client
   */
 
-var WhereApi = function (app_id, app_secret, opts) {
-  opts = opts || {};
-  var env = opts.env || process.env;
-
+var WhereApi = function () {
   this.baseUrl = "https://api.wherewhere.cloud/v1";
-
-  this.app_id = app_id || env.WHERE_APP_ID;
-  this.app_secret = app_secret || env.WHERE_APP_SECRET;
 
   // Domains
   this._httpClient = undefined;
@@ -73,7 +67,6 @@ libs.forEach((e) => {
       return this._libs[e];
     },
   });
-
 });
 
 module.exports = WhereApi;
