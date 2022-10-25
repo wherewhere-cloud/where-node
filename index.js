@@ -18,9 +18,9 @@ var axios = require("axios");
   * @returns {WhereApi} A new instance of WhereApi client
   */
 
-var WhereApi = function () {
-  this.baseUrl = "https://api.wherewhere.cloud/v1";
-
+var WhereApi = function (opts) {
+  opts = opts || {};
+  this.baseUrl = opts.url || "https://api.wherewhere.cloud/v1";
   // Domains
   this._httpClient = undefined;
   this._token = undefined;
